@@ -7,7 +7,7 @@ import comfy.utils
 import folder_paths
 import comfy.samplers
 from nodes import common_ksampler
-from comfy_extras.chainner_models import model_loading
+from spandrel import ModelLoader, ImageModelDescriptor
 
 from PIL import Image, ImageOps, ImageFilter, ImageDraw
 from PIL.PngImagePlugin import PngInfo
@@ -930,7 +930,7 @@ class WLSH_Upscale_By_Factor_With_Model:
         upscale_model.to(device)
         in_img = image.movedim(-1,-3).to(device)
         s = comfy.utils.tiled_scale(in_img, lambda a: upscale_model(a), tile_x=128 + 64, tile_y=128 + 64, overlap = 8, upscale_amount=upscale_model.scale)
-        upscale_model.cpu()
+        upscale_model.to("cpu")
         upscaled = torch.clamp(s.movedim(-3,-1), min=0, max=1.0)
 
         # get dimensions of orginal image
